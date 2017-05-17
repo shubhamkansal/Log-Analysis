@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import psycopg2
 
 def connect(database_name="news"):
@@ -11,7 +13,7 @@ def connect(database_name="news"):
 
 def articles():
     db,c = connect()
-    query = "select * from popular_articles"
+    query = "select * from popular_articles limit 3"
     c.execute(query)
     article = c.fetchall()
     db.close()
@@ -29,17 +31,18 @@ def authors():
 
 def log():
     db,c = connect()
-    query = "select * from sixth_view order by errors desc;"
+    query = "select * from sixth_view where errors >= 1.0"
     c.execute(query)
-    log = c.fetchone()
+    log = c.fetchall()
     db.close()
-    print str(log[0]) + " " + str(log[1]) + "%"
+    for a in range(0,len(log),1):
+        print str(log[a][0]) + " " + str(log[a][1]) + "%"
 
 if __name__ == '__main__':
-    print "\n"
+    print "Most popular articles:\n"
     articles()
-    print "\n"
+    print "Most popular authors:\n"
     authors()
-    print "\n"
+    print "Days with more than 1% errors\n"
     log()
-    print "------End------"
+    print "\n------End------\n"
